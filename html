@@ -1,12 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Chatbot</title>
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffec9c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+        }
+        button[type="submit"] {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .chat-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffec9a;
+        }
+        .user-message {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            display: inline-block;
+        }
+        .bot-message {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
     <h1>Chat with me</h1>
-    <p><strong>You:</strong> {{ user_input }}</p>$
-    <p><strong>Chatbot:</strong> {{ bot_response }}</p>
+    <div class="chat-container">
+        {% for message in chat_history %}
+            {% if message["sender"] == "You" %}
+                <div class="user-message">You: {{ message["message"] }}</div><br>
+            {% elif message["sender"] == "Bot" %}
+                <div class="bot-message">Bot: {{ message["message"] }}</div><br>
+            {% endif %}
+        {% endfor %}
+    </div>
     <form method="post" action="{{ url_for('chatbot') }}">
         <label for="message">Message:</label>
         <input type="text" id="message" name="message" required>
@@ -14,3 +76,5 @@
     </form>
 </body>
 </html>
+
+
