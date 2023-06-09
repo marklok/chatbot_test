@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import openai
 import os
 from dotenv import load_dotenv
+from llama_index import SimpleDirectoryReader, GPTListIndex, readers, GPTSimpleVectorIndex, LLMPredictor, PromptHelper, ServiceContext
+from langchain import OpenAI
+from IPython.display import Markdown, display
 
 # https://platform.openai.com/account/api-keys
 
@@ -12,6 +15,7 @@ print(openai.api_key)
 
 # Set up Flask app
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
 
 # Define the home page route
@@ -23,36 +27,45 @@ def home():
 # Define the Chatbot Route
 @app.route("/chatbot", methods=["POST"])
 def chatbot():
+    
     # Get the message input from the user
     user_input = request.form["message"]
+
+    # Initialize the chat history list if it's not available in the session
+    if "chat_history" not in session:
+        session["chat_history"] = []
+
     # Use the OpenAI API to generate a response
-    prompt = f"User: {user_input}\nChatbot: "
-    chat_history = []
+    prompt = f"User: {user_input}\nChatbot:"
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
         temperature=0.5,
-        max_tokens=60,
+        max_tokens=100,
         top_p=1,
         frequency_penalty=0,
-        stop=["\nUser: ", "\nChatbot: "]
+        stop="\nUser:"
     )
 
     # Extract the response text from the OpenAI API result
     bot_response = response.choices[0].text.strip()
 
-    # Add the user input and bot response to the chat history
-    chat_history.append(f"User: {user_input}\nChatbot: {bot_response}")
+    # Append the user input and bot response to the chat history
+    session["chat_history"].append({"sender": "You", "message": user_input})
+    session["chat_history"].append({"sender": "Bot", "message": bot_response})
 
-    # Render the Chatbot template with the response text
+    # Limit the chat history to the last 10 messages
+    session["chat_history"] = session["chat_history"][-10:]
+
+    # Render the Chatbot template with the response text and chat history
     return render_template(
         "chatbot.html",
-        user_input=user_input,
-        bot_response=bot_response,
+        chat_history=session["chat_history"],
     )
 
 
 # Start the Flask app
 if __name__ == "__main__":
     app.run(debug=True)
+
     
