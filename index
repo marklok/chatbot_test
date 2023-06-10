@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DesignPrivacy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffec9c; /* Set the background color */
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 18px;
+            width: 600px;
+
+        }
+        .logo {
+            width: 600px; /* Adjust the width as needed */
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+        }
+        button[type="submit"] {
+            padding: 5px 10px;
+            background-color: #270b45;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .container {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 15;
+            color: #270b45;
+            width: 600px;
+        }
+        .container p {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <img class="logo" src="static/logo.png" alt="Logo">
+    <div class="container">
+        <p><b>  We assess the privacy risks of your digital products so you don't have to.</b><p><br>
+        <p>     Type the name of a new or existing product in your organization and the AI will help you assess privacy risks,
+                based on the legal requirements and policies of your business.</p>
+    </div>
+    <h1>What product do you want to assess today?</h1>
+    <form method="post" action="{{ url_for('chatbot') }}">
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
